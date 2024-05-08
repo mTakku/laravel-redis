@@ -97,5 +97,32 @@ class RedisTest extends TestCase
         ], $response);
     }
 
+    public function testGeoPoint()
+    {
+        Redis::del("sellers");
+
+        Redis::geoadd("sellers", 106.820990, -6.174704, "Toko A");
+        Redis::geoadd("sellers", 106.822696, -6.176870, "Toko B");
+
+        $result = Redis::geodist("sellers", "Toko A", "Toko B", "km");
+        self::assertEquals(0.3061, $result);
+
+        $result = Redis::geosearch("sellers", new FromLonLat(106.821666, -6.175494), new ByRadius(5, "km"));
+        self::assertEquals(["Toko A", "Toko B"], $result);
+    }
+
+    public function testHyperLogLog()
+    {
+        Redis::pfadd("visitors", "farel", "mercys", "putra");
+        Redis::pfadd("visitors", "farel", "zeta", "takku");
+        Redis::pfadd("visitors", "jasson", "zeta", "takku");
+
+        $result = Redis::pfcount("visitors");
+        self::assertEquals(6, $result);
+
+    }
+
+
+
 
 }
