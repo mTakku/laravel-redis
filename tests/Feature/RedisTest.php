@@ -177,7 +177,11 @@ class RedisTest extends TestCase
 
     }
 
+    public function testConsumerStream()
+    {
+        $result = Redis::xreadgroup("group1", "consumer-1", ["members" => ">"], 3, 3000);
 
-
-
+        self::assertNotNull($result);
+        echo json_encode($result, JSON_PRETTY_PRINT);
+    }
 }
