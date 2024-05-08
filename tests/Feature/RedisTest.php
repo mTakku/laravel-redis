@@ -168,6 +168,15 @@ class RedisTest extends TestCase
         self::assertTrue(true);
     }
 
+    public function testCreateConsumer()
+    {
+        Redis::xgroup("create", "members", "group1", "0");
+        Redis::xgroup("createconsumer", "members", "group1", "consumer-1");
+        Redis::xgroup("createconsumer", "members", "group1", "consumer-2");
+        self::assertTrue(true);
+
+    }
+
 
 
 
