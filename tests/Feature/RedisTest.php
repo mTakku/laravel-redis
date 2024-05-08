@@ -122,6 +122,19 @@ class RedisTest extends TestCase
 
     }
 
+    public function testPipeline()
+    {
+        Redis::pipeline(function ($pipeline){
+            $pipeline->setex("name", 2, "Farel");
+            $pipeline->setex("address", 2, "Indonesia");
+        });
+
+        $response = Redis::get("name");
+        self::assertEquals("Farel", $response);
+        $response = Redis::get("address");
+        self::assertEquals("Indonesia", $response);
+    }
+
 
 
 
