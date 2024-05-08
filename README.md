@@ -1,66 +1,256 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+<p align="center" >
+  <b>POINT UTAMA</b>
 </p>
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+> #### INSTALASI
+> - PHP 8.1.0
+> - LARAVEL 10.0.3
+>   ```
+>   Composer Create-project laravel\laravel=v10.0.3 laravel-redis
+>   ```
+> - REDIS
+> - Tutorial instalasi redis
+>   ```
+>   https://www.youtube.com/watch?v=DLKzd3bvgt8&ab_channel=TrendingCode
+>   ```
+> - Jika sudah pergi ke terminal dan masukan syntax ```redis-server```
+---
+> #### APA REDIS?
+> Redis adalah salah satu database in Memory yang paling populer di dunia
+> banyak fitur di laravel bisa menggunakan redis seperti cache, session sampai rate limiting
+> 
+> #### REDIS COMMAND
+> - Untuk mengirim perintah ke redis, kita bisa menggunakan method command() di redis facade
+> - atau bisa langsung menggunakan nama method sesuai dengan command di redis
+>
+> Berikut contoh ping redis:
+>
+> ```
+> $response = Redis::command("ping");
+> self::assertEquals("PONG", $response);
+>
+> $response = Redis::ping();
+> self::assertEquals("PONG", $response);
+> ```
+>
+> #### STRING
+> - Command yang sering kita gunakan adlaah menggunakan set(),setEX(), M
+>
+> Berikut contoh kode manipulasi collection :
+> ```
+> Redis::setex("name", 2, "Farel");
+> $response = Redis::get("name");
+> self::assertEquals("Farel", $response);
+>
+> sleep(5);
+>
+> $response = Redis::get("name");
+> self::assertNull($response);
+> ```
+>
+> #### LIST
+> - 
+>
+> Berikut salah satu contoh kode list :
+> ```
+> Redis::del("names");
+>
+> Redis::rpush("names", "Farel");
+> Redis::rpush("names", "Mercys");
+> Redis::rpush("names", "Thona");
+>
+> $response = Redis::lrange("names", 0, -1);
+> self::assertEquals(["Farel", "Mercys", "Thona"], $response);
+>
+> self::assertEquals("Farel", Redis::lpop("names"));
+> self::assertEquals("Mercys", Redis::lpop("names"));
+> self::assertEquals("Thona", Redis::lpop("names"));
+> ```
+> #### SET
+> - 
+>
+> Berikut contoh kode set :
+>
+> ```
+> Redis::del("names");
+> 
+> Redis::sadd("names", "Farel");
+> Redis::sadd("names", "Farel");
+> Redis::sadd("names", "Mercys");
+> Redis::sadd("names", "Mercys");
+> Redis::sadd("names", "Thona");
+> Redis::sadd("names", "Thona");
+>
+> $response = Redis::smembers("names");
+> self::assertEquals(["Farel", "Mercys", "Thona"], $response);
+> ```
+---
+> #### SORTED SET
+> - 
+>
+> Berikut contoh kode sorted set :
+> ```
+> Redis::del("names");
+>
+> Redis::zadd("names", 100, "Farel");
+> Redis::zadd("names", 100, "Farel");
+> Redis::zadd("names", 85, "Mercys");
+> Redis::zadd("names", 85, "Mercys");
+> Redis::zadd("names", 95, "Thona");
+> Redis::zadd("names", 95, "Thona");
+>
+> $response = Redis::zrange("names", 0, -1);
+> self::assertEquals(["Mercys", "Thona", "Farel"], $response);
+> ```
+> #### HASH
+> -
+>
+> berikut contoh kode hash :
+> ```
+> Redis::del("user:1");
+>
+> Redis::hset("user:1", "name", "Farel");
+> Redis::hset("user:1", "email", "farel@localhost");
+> Redis::hset("user:1", "age", 30);\
+>
+> $response = Redis::hgetall("user:1");
+> self::assertEquals([
+>     "name" => "Farel",
+>     "email" => "farel@localhost",
+>     "age" => "18"
+> ], $response);
+> ```
+> #### GEO POINT
+> -
+>
+> Berikut contoh salah satu kode geo point :
+> ```
+> Redis::del("sellers");
+>
+> Redis::geoadd("sellers", 106.820990, -6.174704, "Toko A");
+> Redis::geoadd("sellers", 106.822696, -6.176870, "Toko B");
+>
+> $result = Redis::geodist("sellers", "Toko A", "Toko B", "km");
+> self::assertEquals(0.3061, $result);
+>
+> $result = Redis::geosearch("sellers", new FromLonLat(106.821666, -6.175494), new ByRadius(5, "km"));
+> self::assertEquals(["Toko A", "Toko B"], $result);
+> }
+> ```
+>
+> #### HYPER LOG LOG
+> - 
+>
+> Berikut contoh kode partitioning :
+> ```
+> Redis::pfadd("visitors", "farel", "mercys", "putra");
+> Redis::pfadd("visitors", "farel", "zeta", "takku");
+> Redis::pfadd("visitors", "jasson", "zeta", "takku");
+>
+> $result = Redis::pfcount("visitors");
+> self::assertEquals(6, $result);
+> ```
+>
+> #### PIPELINE
+> - Kita bisa menggunakan method pipeline(), dimana kita bisa tambahkan callback function yang berisi perintah perintah yang akan dikerjakan dalam pipeline tersebut
+>
+> Berikut contoh kode pipeline :
+> ```
+> Redis::pipeline(function ($pipeline){
+>     $pipeline->setex("name", 2, "Farel");
+>     $pipeline->setex("address", 2, "Indonesia");
+> });
+>
+> $response = Redis::get("name");
+> self::assertEquals("Farel", $response);
+> $response = Redis::get("address");
+> self::assertEquals("Indonesia", $response);
+> ```
+>
+> #### TRANSACTION
+> - Kita bisa menggunakan method transaction() dan cara penggunaannya sama seperti method pipeline()
+>
+> Berikut contoh kode transaction :
+> ```
+> Redis::transaction(function ($pipeline){
+>     $transaction->setex("name", 2, "Farel");
+>     $transaction->setex("address", 2, "Indonesia");
+> });
+>
+> $response = Redis::get("name");
+> self::assertEquals("Farel", $response);
+> $response = Redis::get("address");
+> self::assertEquals("Indonesia", $response);
+> ```
+>
+> #### LARAVEL COMMAND
+> - Untuk melakukan pengetesan subscriber, kita akan membuat laravel command yaitu fitur untuk membuat perintah berbasis terminal kitab isa gunakan perintah ```php artisan make:command NamaCommand```
+>
+> #### SUBSCRIBE PUBSUB
+> - 
+>
+> Berikut contoh kode pubsub :
+> ```
+> for ($i = 0; $i < 10; $i++) {
+>     Redis::publish("channel-1", "Hello World $i");
+>     Redis::publish("channel-2", "Good Bye $i");
+> }
+> self::assertTrue(true);
+> ```
+>
+> #### STREAM
+> - 
+>
+> Berikut contoh kode stream :
+> ```
+> for ($i = 0; $i < 10; $i++) {
+>     Redis::xadd("members", "*", [
+>         "name" => "Farel $i",
+>         "address" => "Indonesia"
+>     ]);
+> }
+> self::assertTrue(true);
+> ```
+>
+> #### CREATECONSUMER
+>
+> berikut contoh kode createcosumer :
+> ```
+> Redis::xgroup("create", "members", "group1", "0");
+> Redis::xgroup("createconsumer", "members", "group1", "consumer-1");
+> Redis::xgroup("createconsumer", "members", "group1", "consumer-2");
+> self::assertTrue(true);
+> ```
+<p align="center" >
+  <b>PERTANYAAN DAN CATATAN TAMBAHAN</b>
+</p>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+> - 
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+<p align="center" >
+  <b>KESIMPULAN</b>
+</p>
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-## Laravel Sponsors
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
 
-## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+
+
